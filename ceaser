@@ -1,0 +1,126 @@
+import java.io.BufferedReader;
+import java.io.*; 
+import java.io.File;  
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.*;
+import java.util.Scanner; 
+
+public class CEASER{
+   public static void main (String [] cmdLn)throws IOException {
+   
+      //------------------------------------- read from file and convert to char array
+      String FileText = "";
+   
+      File file = new File("lista3.txt");
+      Scanner scanner = new Scanner(file);   
+      FileText = scanner.nextLine();
+      while (scanner.hasNextLine()) {
+         FileText = scanner.nextLine();
+      }
+      char[] charText = FileText.toCharArray();      
+      
+      Scanner number = new Scanner(System.in);// asking user a number
+      int num = number.nextInt();
+      
+      int []arrayInt = new int[num];
+      for(int i=0;i<num;i++){
+      Scanner number1 = new Scanner(System.in);// asking user an array of number.
+      arrayInt[i] = number1.nextInt();
+      }
+   //----------------------------------------------- using encrypt method 
+     
+      String [] Encrypt = new String[charText.length];
+      char encrypt_message;
+      for(int i=0, j=0; i<charText.length; i++,j++){
+         if(j>=arrayInt.length){
+            j=0; 
+         }
+      
+         encrypt_message = CEASER.encrypt_character(charText[i],arrayInt[j]);
+         Encrypt[i] =String.valueOf(encrypt_message);
+         
+      }
+      System.out.println(convertArrayToString(Encrypt));
+      //------------------------------------- saving encrypt message in a file
+         
+      FileWriter fw=new FileWriter("E:/Program2/lista4.txt");  
+      fw.write(convertArrayToString(Encrypt));    
+      fw.close();      
+            
+   //-------------------------------------------read the encrypt message in the file
+      String FileText2 = "";
+      File file2 = new File("lista4.txt");
+      Scanner scanner2 = new Scanner(file2);
+   
+      FileText2 = scanner2.nextLine();
+      while (scanner2.hasNextLine()) {
+         FileText2 = scanner2.nextLine();
+      }
+      char[] charText2 = FileText2.toCharArray();
+      //------------------------------------------ using decrypt method 
+      char decrypt_message;
+      String [] Decrypt = new String[charText2.length];
+      for(int i=0, j=0; i<charText2.length; i++,j++){
+         if(j>=arrayInt.length){
+            j=0; 
+         }
+      
+         decrypt_message = CEASER.decrypt_character(charText2[i],arrayInt[j]);
+         Decrypt[i] =String.valueOf(decrypt_message);
+         
+      }         
+      System.out.println(convertArrayToString(Decrypt));
+   }
+   public static char encrypt_character ( char tkn, int key){ // encrypt a message
+   
+      int c=0;
+        
+      c = (int)tkn + key;
+      if(c==32+key){ //making space "irrelevant"
+            
+         c=(char)32;
+      }
+            
+      if (c > 122 ){
+         c= ((int)tkn - (26-key));
+      }
+      else if (c>90 && c<93+key){
+         c= ((int)tkn - (26-key));}
+      else{
+         c= c;
+      }
+          
+      return (char)c;
+   
+      
+   } 
+   public static char decrypt_character ( char tkn, int key){ // decrypt hidden message 
+      int c=0;
+        
+      c = (int)tkn ;
+      if(c==32-key){ // making space "irrelevant"
+         c=(char)32;
+      }
+      if (c > 96 && c<97+key){
+         c= ((int)tkn + (26-key));
+      }
+      else if (c>100||c>64+key){
+         c= ((int)tkn - key);
+      }
+      else if(c>64 && c<65+key){
+         c =(int)tkn+(26-key);
+      }
+      else {
+         c=c;
+      }
+        
+      return (char)c;
+   } 
+      
+     
+   public static String convertArrayToString(String[] strArray) {
+      String message = String.join("", strArray);
+      return message;
+   }
+}
